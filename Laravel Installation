@@ -1,0 +1,38 @@
+composer create-project --prefer-dist laravel/laravel resume-app
+cd resume-app
+git init
+git add .
+git commit -m "Initial Laravel installation"
+git remote add origin <your-repo-url>
+git push -u origin master
+php artisan make:migration create_resumes_table
+public function up()
+{
+    Schema::create('resumes', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('email');
+        $table->string('phone');
+        $table->text('experience');
+        $table->text('education');
+        $table->timestamps();
+    });
+}
+php artisan migrate
+php artisan make:model Resume
+<h1>{{ $resume->name }}</h1>
+<p>Email: {{ $resume->email }}</p>
+<p>Phone: {{ $resume->phone }}</p>
+<h2>Experience</h2>
+<p>{{ $resume->experience }}</p>
+<h2>Education</h2>
+<p>{{ $resume->education }}</p>
+
+php artisan make:controller ResumeController
+public function show($id)
+{
+    $resume = Resume::findOrFail($id);
+    return view('resume', compact('resume'));
+}
+Route::get('/resume/{id}', [ResumeController::class, 'show']);
+
